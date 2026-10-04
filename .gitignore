@@ -1,0 +1,44 @@
+# ==============================================================================
+# Inventario Universal - .gitignore
+# ==============================================================================
+
+# Dependencias de paquetes
+node_modules/
+.pnp
+.pnp.js
+
+# Entornos de desarrollo y secretos (CRÍTICO)
+.env*.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Build y optimizaciones de Next.js
+.next/
+out/
+build/
+dist/
+
+# Supabase Local (Datos temporales, logs de contenedores y ramas efímeras)
+supabase/.temp/
+supabase/.branches/
+
+# Logs de depuración de npm / yarn / pnpm
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Archivos del sistema operativo y editores
+.DS_Store
+*.pem
+Thumbs.db
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
