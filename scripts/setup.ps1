@@ -53,14 +53,13 @@ if (-not (Test-Path $envLocalPath)) {
     if (Test-Path $envExamplePath) {
         Copy-Item $envExamplePath $envLocalPath
         Write-Host "✓ Archivo .env.local creado a partir de .env.example." -ForegroundColor Green
-    } else {
-        $defaultEnv = @"
-NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZWZlcmVuY2UiOiJpbnZlbnRhcmlvLXVuaXZlcnNhbCIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzI3OTkyMDAwLCJleHAiOjIwNDMzNTIwMDB9.EXAMPLE_KEY
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZWZlcmVuY2UiOiJpbnZlbnRhcmlvLXVuaXZlcnNhbCIsInJvbGUiOiJzZXJ2aWNlX3JvbGUiLCJpYXQiOjE3Mjc5OTIwMDAsImV4cCI6MjA0MzM1MjAwMH0.EXAMPLE_KEY
-DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres
-"@
-        Set-Content -Path $envLocalPath -Value $defaultEnv
+        $defaultEnvLines = @(
+            "NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321",
+            "NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZWZlcmVuY2UiOiJpbnZlbnRhcmlvLXVuaXZlcnNhbCIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzI3OTkyMDAwLCJleHAiOjIwNDMzNTIwMDB9.EXAMPLE_KEY",
+            "SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZWZlcmVuY2UiOiJpbnZlbnRhcmlvLXVuaXZlcnNhbCIsInJvbGUiOiJzZXJ2aWNlX3JvbGUiLCJpYXQiOjE3Mjc5OTIwMDAsImV4cCI6MjA0MzM1MjAwMH0.EXAMPLE_KEY",
+            "DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres"
+        )
+        Set-Content -Path $envLocalPath -Value $defaultEnvLines
         Write-Host "✓ Archivo .env.local generado con valores predeterminados." -ForegroundColor Green
     }
 } else {
