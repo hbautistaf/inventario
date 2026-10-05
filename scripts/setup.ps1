@@ -13,38 +13,41 @@ Write-Host "       Inventario Universal - Setup Local para Windows              
 Write-Host "======================================================================" -ForegroundColor Cyan
 
 # ------------------------------------------------------------------------------
-# 1. Comprobación de Node.js y npm
+# 1. Comprobacion de Node.js y npm
 # ------------------------------------------------------------------------------
-Write-Host "`n[1/5] Verificando Node.js y npm..." -ForegroundColor Yellow
+Write-Host ""
+Write-Host "[1/5] Verificando Node.js y npm..." -ForegroundColor Yellow
 
 try {
     $nodeVersion = node -v
-    Write-Host "✓ Node.js detectado: $nodeVersion" -ForegroundColor Green
+    Write-Host "[OK] Node.js detectado: $nodeVersion" -ForegroundColor Green
 } catch {
-    Write-Host "✗ Node.js no está instalado o no se encuentra en el PATH." -ForegroundColor Red
-    Write-Host "  Descárgalo e instálalo desde: https://nodejs.org/" -ForegroundColor Yellow
+    Write-Host "[ERROR] Node.js no esta instalado o no se encuentra en el PATH." -ForegroundColor Red
+    Write-Host "  Descargalo e instalalo desde: https://nodejs.org/" -ForegroundColor Yellow
     exit 1
 }
 
 try {
     $npmVersion = npm -v
-    Write-Host "✓ npm detectado: $npmVersion" -ForegroundColor Green
+    Write-Host "[OK] npm detectado: $npmVersion" -ForegroundColor Green
 } catch {
-    Write-Host "✗ npm no está disponible." -ForegroundColor Red
+    Write-Host "[ERROR] npm no esta disponible." -ForegroundColor Red
     exit 1
 }
 
 # ------------------------------------------------------------------------------
-# 2. Instalación de Dependencias de Node
+# 2. Instalacion de Dependencias de Node
 # ------------------------------------------------------------------------------
-Write-Host "`n[2/5] Instalando dependencias de Node.js (npm install)..." -ForegroundColor Yellow
+Write-Host ""
+Write-Host "[2/5] Instalando dependencias de Node.js (npm install)..." -ForegroundColor Yellow
 & npm install
-Write-Host "✓ Dependencias instaladas correctamente." -ForegroundColor Green
+Write-Host "[OK] Dependencias instaladas correctamente." -ForegroundColor Green
 
 # ------------------------------------------------------------------------------
-# 3. Preparación de Variables de Entorno (.env.local)
+# 3. Preparacion de Variables de Entorno (.env.local)
 # ------------------------------------------------------------------------------
-Write-Host "`n[3/5] Configurando variables de entorno (.env.local)..." -ForegroundColor Yellow
+Write-Host ""
+Write-Host "[3/5] Configurando variables de entorno (.env.local)..." -ForegroundColor Yellow
 
 $envLocalPath = Join-Path $PSScriptRoot "..\.env.local"
 $envExamplePath = Join-Path $PSScriptRoot "..\.env.example"
@@ -52,7 +55,8 @@ $envExamplePath = Join-Path $PSScriptRoot "..\.env.example"
 if (-not (Test-Path $envLocalPath)) {
     if (Test-Path $envExamplePath) {
         Copy-Item $envExamplePath $envLocalPath
-        Write-Host "✓ Archivo .env.local creado a partir de .env.example." -ForegroundColor Green
+        Write-Host "[OK] Archivo .env.local creado a partir de .env.example." -ForegroundColor Green
+    } else {
         $defaultEnvLines = @(
             "NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321",
             "NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZWZlcmVuY2UiOiJpbnZlbnRhcmlvLXVuaXZlcnNhbCIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzI3OTkyMDAwLCJleHAiOjIwNDMzNTIwMDB9.EXAMPLE_KEY",
@@ -60,30 +64,31 @@ if (-not (Test-Path $envLocalPath)) {
             "DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres"
         )
         Set-Content -Path $envLocalPath -Value $defaultEnvLines
-        Write-Host "✓ Archivo .env.local generado con valores predeterminados." -ForegroundColor Green
+        Write-Host "[OK] Archivo .env.local generado con valores predeterminados." -ForegroundColor Green
     }
 } else {
-    Write-Host "ℹ Archivo .env.local ya existe. Se conserva la configuración." -ForegroundColor Cyan
+    Write-Host "[INFO] Archivo .env.local ya existe. Se conserva la configuracion." -ForegroundColor Cyan
 }
 
 # ------------------------------------------------------------------------------
-# 4. Verificación de Docker Desktop en Windows
+# 4. Verificacion de Docker Desktop en Windows
 # ------------------------------------------------------------------------------
-Write-Host "`n[4/5] Verificando Docker Desktop para Supabase Local..." -ForegroundColor Yellow
+Write-Host ""
+Write-Host "[4/5] Verificando Docker Desktop para Supabase Local..." -ForegroundColor Yellow
 $dockerReady = $false
 
 try {
     $null = Get-Command docker -ErrorAction Stop
     $dockerInfo = docker info 2>&1
     if ($LASTEXITCODE -eq 0) {
-        Write-Host "✓ Docker Desktop está instalado y en ejecución." -ForegroundColor Green
+        Write-Host "[OK] Docker Desktop esta instalado y en ejecucion." -ForegroundColor Green
         $dockerReady = $true
     } else {
-        Write-Host "⚠ Docker CLI está instalado pero el demonio no está respondiendo." -ForegroundColor Yellow
-        Write-Host "  Abre la aplicación Docker Desktop en Windows y espera a que inicie el motor." -ForegroundColor Yellow
+        Write-Host "[WARN] Docker CLI esta instalado pero el demonio no esta respondiendo." -ForegroundColor Yellow
+        Write-Host "  Abre la aplicacion Docker Desktop en Windows y espera a que inicie el motor." -ForegroundColor Yellow
     }
 } catch {
-    Write-Host "✗ No se encontró Docker en el sistema." -ForegroundColor Red
+    Write-Host "[ERROR] No se encontro Docker en el sistema." -ForegroundColor Red
     Write-Host "  Para usar Supabase local en Windows, instala Docker Desktop con soporte WSL2:" -ForegroundColor Yellow
     Write-Host "  https://docs.docker.com/desktop/setup/install/windows-install/" -ForegroundColor Cyan
 }
@@ -91,16 +96,17 @@ try {
 # ------------------------------------------------------------------------------
 # 5. Opciones de Arranque de Supabase
 # ------------------------------------------------------------------------------
-Write-Host "`n[5/5] Estado de Base de Datos..." -ForegroundColor Yellow
+Write-Host ""
+Write-Host "[5/5] Estado de Base de Datos..." -ForegroundColor Yellow
 
 if ($dockerReady) {
-    $response = Read-Host "¿Deseas iniciar Supabase local y aplicar migraciones ahora? (s/N)"
+    $response = Read-Host "Deseas iniciar Supabase local y aplicar migraciones ahora? (s/N)"
     if ($response -match "^[sSyY]$") {
         Write-Host "Iniciando Supabase Local..." -ForegroundColor Cyan
         & npx supabase start
-        Write-Host "Aplicando migración canónica limpia..." -ForegroundColor Cyan
+        Write-Host "Aplicando migracion canonica limpia..." -ForegroundColor Cyan
         & npx supabase db reset
-        Write-Host "✓ Supabase iniciado correctamente." -ForegroundColor Green
+        Write-Host "[OK] Supabase iniciado correctamente." -ForegroundColor Green
         Write-Host "  Studio: http://127.0.0.1:54323" -ForegroundColor Cyan
         Write-Host "  API:    http://127.0.0.1:54321" -ForegroundColor Cyan
     }
@@ -110,7 +116,8 @@ if ($dockerReady) {
     Write-Host "  npm run db:reset" -ForegroundColor Cyan
 }
 
-Write-Host "`n======================================================================" -ForegroundColor Green
-Write-Host "   ✓ Configuración completada con éxito.                              " -ForegroundColor Green
-Write-Host "   Para iniciar la aplicación Next.js ejecuta: npm run dev            " -ForegroundColor Green
-Write-Host "======================================================================`n" -ForegroundColor Green
+Write-Host ""
+Write-Host "======================================================================" -ForegroundColor Green
+Write-Host "   [OK] Configuracion completada con exito.                           " -ForegroundColor Green
+Write-Host "   Para iniciar la aplicacion Next.js ejecuta: npm run dev            " -ForegroundColor Green
+Write-Host "======================================================================" -ForegroundColor Green
